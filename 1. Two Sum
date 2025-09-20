@@ -1,0 +1,168 @@
+1. Two Sum
+Solved
+Easy
+Hint
+Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+
+Input: nums = [3,3], target = 6
+Output: [0,1]
+ 
+
+Constraints:
+
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.
+ 
+
+Follow-up: Can you come up with an algorithm that is less than O(n2) time complexity?
+
+ ```python
+
+          class Solution:
+          def twoSum(self, nums, target):
+              """
+              Find two numbers in the array that add up to the target.
+              
+              Args:
+                  nums: List of integers
+                  target: Target sum value
+                  
+              Returns:
+                  List of two indices whose values sum to target
+                  
+              Time Complexity: O(n)
+              Space Complexity: O(n)
+              """
+              # Hash map to store value -> index mapping
+              num_to_index = {}
+              
+              for i, num in enumerate(nums):
+                  # Calculate what number we need to find
+                  complement = target - num
+                  
+                  # Check if complement exists in our hash map
+                  if complement in num_to_index:
+                      # Found the pair! Return indices
+                      return [num_to_index[complement], i]
+                  
+                  # Store current number and its index for future lookups
+                  num_to_index[num] = i
+              
+              # This should never be reached given the problem constraints
+              return []
+      
+      
+      def twoSum(nums, target):
+          """
+          Standalone function version for backward compatibility.
+          """
+          return Solution().twoSum(nums, target)
+      
+      
+      def twoSum_bruteforce(nums, target):
+          """
+          Brute force solution - O(n^2) time complexity.
+          Included for comparison purposes.
+          """
+          n = len(nums)
+          for i in range(n):
+              for j in range(i + 1, n):
+                  if nums[i] + nums[j] == target:
+                      return [i, j]
+          return []
+      
+      
+      # Test the solutions with provided examples
+      def test_two_sum():
+          print("=== Testing Two Sum Solutions ===\n")
+          
+          # Create solution instance
+          solution = Solution()
+          
+          test_cases = [
+              ([2, 7, 11, 15], 9, [0, 1]),
+              ([3, 2, 4], 6, [1, 2]),
+              ([3, 3], 6, [0, 1]),
+              ([-1, -2, -3, -4, -5], -8, [2, 4]),  # Additional test with negatives
+              ([1, 2, 3, 4, 5], 9, [3, 4])        # Additional test
+          ]
+          
+          for i, (nums, target, expected) in enumerate(test_cases, 1):
+              print("Test Case {}: nums = {}, target = {}".format(i, nums, target))
+              
+              # Test optimized solution
+              result_optimized = solution.twoSum(nums, target)
+              print("Optimized O(n): {}".format(result_optimized))
+              
+              # Test brute force solution
+              result_brute = twoSum_bruteforce(nums, target)
+              print("Brute Force O(n²): {}".format(result_brute))
+              
+              # Verify results
+              if (nums[result_optimized[0]] + nums[result_optimized[1]] == target and
+                  nums[result_brute[0]] + nums[result_brute[1]] == target):
+                  print("✓ Both solutions correct!")
+              else:
+                  print("✗ Error in solution!")
+              
+              print("-" * 40)
+      
+      
+      # Alternative solution using two pointers (requires sorted array)
+      def twoSum_two_pointers(nums, target):
+          """
+          Two pointers approach - requires sorting the array first.
+          Time: O(n log n) due to sorting
+          Space: O(n) to store original indices
+          
+          Note: This approach is less efficient than hash map for this problem
+          but useful to know for variations.
+          """
+          # Create list of (value, original_index) pairs
+          indexed_nums = [(nums[i], i) for i in range(len(nums))]
+          
+          # Sort by value
+          indexed_nums.sort()
+          
+          left, right = 0, len(indexed_nums) - 1
+          
+          while left < right:
+              current_sum = indexed_nums[left][0] + indexed_nums[right][0]
+              
+              if current_sum == target:
+                  # Return original indices
+                  return sorted([indexed_nums[left][1], indexed_nums[right][1]])
+              elif current_sum < target:
+                  left += 1
+              else:
+                  right -= 1
+          
+          return []
+      
+      
+      if __name__ == "__main__":
+          test_two_sum()
+          
+          print("\n=== Algorithm Comparison ===")
+          print("1. Hash Map Approach: O(n) time, O(n) space - BEST")
+          print("2. Brute Force: O(n²) time, O(1) space")  
+          print("3. Two Pointers: O(n log n) time, O(n) space")
